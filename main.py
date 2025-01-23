@@ -4,6 +4,52 @@ from ursina.prefabs.first_person_controller import FirstPersonController
 
 shift = False
 app = Ursina()
+
+class Player(Entity):
+    def __init__(self, **kwargs):
+        self.controller = FirstPersonController(**kwargs)
+        super().__init__(parent=self.controller)
+
+        self.stone = Entity(parent=self.controller.camera_pivot,
+                            scale = 0.1,
+                            position = Vec3(0,170,0),
+                            model='stone',
+                            visible=False)
+
+        self.dirt = Entity(parent=self.controller.camera_pivot,
+                            scale = 0.1,
+                            position = Vec3(0,170,0),
+                            model='dirt',
+                            visible=False)
+
+        self.inventory = [self.stone, self.dirt]
+        self.current_inventory = 0
+        self.switch_inventory()
+
+    def switch_inventory(self):
+        for i, v in enumerate(self.inventory):
+            if i == self.current_inventory:
+                v.visible = True
+            else: v.visible = False
+
+    def input(self, key):
+        try:
+            self.current_inventory = int(key) - 1
+            self.switch_inventory()
+        except ValueError:
+            pass
+
+        if key == 'scroll up':
+            self.current_inventory = (self.current_inventory + 1) % len(self.inventory)
+            self.switch_inventory()
+        if key == 'scroll down':
+            self.current_inventory = (self.current_inventory + 1) % len(self.inventory)
+            self.switch_inventory()
+
+    def update(self):
+        self.controller.camera_pivot.y = 2 - held_keys['left control']
+
+
 class Voxel(Button):
     def __init__(self, position=(0,0,0)):
         super().__init__(parent=scene,
