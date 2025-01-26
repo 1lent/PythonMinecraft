@@ -11,17 +11,19 @@ class Player(Entity):
         super().__init__(parent=self.controller)
 
         self.stone = Entity(parent=self.controller.camera_pivot,
-                            scale=0.1,
-                            position=(0.7, -1,1,5),
+                            scale=0.5,
+                            position=(1, -0.75, 1.2),
                             rotation=Vec3(0, 170, 0),
-                            model='stone',
+                            model='dirt2',
                             visible=False)
 
         self.dirt = Entity(parent=self.controller.camera_pivot,
-                           scale=0.1,
-                           position=(0.7, -1, 1, 5),
+                           scale=0.5,
+                           position=(1, -0.5, 1.2),
                            rotation=Vec3(0, 170, 0),
                            model='dirt',
+                           texture='dirt_texture.jpg',
+                        #    color = rgb(128, 128, 0),
                            visible=False)
 
         self.inventory = [self.stone, self.dirt]
@@ -54,12 +56,12 @@ class Player(Entity):
 
 
 class Voxel(Button):
-    def __init__(self, position=(0, 0, 0)):
+    def __init__(self, position=(0, 0, 0), texture='white_cube'):
         super().__init__(parent=scene,
                          position=position,
                          model='cube',
                          origin_y=.5,
-                         texture='white_cube',
+                         texture=texture,
                          color=color.hsv(0, 0, random.uniform(.9, 1.0)),
                          highlight_color=color.red,
                          )
@@ -80,7 +82,8 @@ def input(key):
     if key == 'right mouse down':
         hit_info = raycast(camera.world_position, camera.forward, distance=5)
         if hit_info.hit:
-            Voxel(position=hit_info.entity.position + hit_info.normal)
+            Voxel(position=hit_info.entity.position + hit_info.normal, texture = player.inventory[player.current_inventory].texture)
+            # Assign the texture of held item to Voxel
 
     if key == 'left mouse down' and mouse.hovered_entity:
         destroy(mouse.hovered_entity)
