@@ -1,9 +1,9 @@
-
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 
 shift = False
 app = Ursina()
+
 
 class Player(Entity):
     def __init__(self, **kwargs):
@@ -11,16 +11,18 @@ class Player(Entity):
         super().__init__(parent=self.controller)
 
         self.stone = Entity(parent=self.controller.camera_pivot,
-                            scale = 0.1,
-                            position = Vec3(0,170,0),
+                            scale=0.1,
+                            position=(0.7, -1,1,5),
+                            rotation=Vec3(0, 170, 0),
                             model='stone',
                             visible=False)
 
         self.dirt = Entity(parent=self.controller.camera_pivot,
-                            scale = 0.1,
-                            position = Vec3(0,170,0),
-                            model='dirt',
-                            visible=False)
+                           scale=0.1,
+                           position=(0.7, -1, 1, 5),
+                           rotation=Vec3(0, 170, 0),
+                           model='dirt',
+                           visible=False)
 
         self.inventory = [self.stone, self.dirt]
         self.current_inventory = 0
@@ -30,7 +32,8 @@ class Player(Entity):
         for i, v in enumerate(self.inventory):
             if i == self.current_inventory:
                 v.visible = True
-            else: v.visible = False
+            else:
+                v.visible = False
 
     def input(self, key):
         try:
@@ -43,7 +46,7 @@ class Player(Entity):
             self.current_inventory = (self.current_inventory + 1) % len(self.inventory)
             self.switch_inventory()
         if key == 'scroll down':
-            self.current_inventory = (self.current_inventory + 1) % len(self.inventory)
+            self.current_inventory = (self.current_inventory - 1) % len(self.inventory)
             self.switch_inventory()
 
     def update(self):
@@ -51,19 +54,20 @@ class Player(Entity):
 
 
 class Voxel(Button):
-    def __init__(self, position=(0,0,0)):
+    def __init__(self, position=(0, 0, 0)):
         super().__init__(parent=scene,
-            position=position,
-            model='cube',
-            origin_y=.5,
-            texture='white_cube',
-            color=color.hsv(0, 0, random.uniform(.9, 1.0)),
-            highlight_color=color.red,
-        )
+                         position=position,
+                         model='cube',
+                         origin_y=.5,
+                         texture='white_cube',
+                         color=color.hsv(0, 0, random.uniform(.9, 1.0)),
+                         highlight_color=color.red,
+                         )
+
 
 for z in range(8):
     for x in range(8):
-        voxel = Voxel(position=(x,0,z))
+        voxel = Voxel(position=(x, 0, z))
 
 
 def input(key):
@@ -83,7 +87,7 @@ def input(key):
     if held_keys['left mouse']:
         destroy(mouse.hovered_entity)
 
-    if key == 'left shift': #shift controls
+    if key == 'left shift':  # shift controls
         shift = not shift
         if shift:
             player.speed = 2.5
@@ -91,6 +95,5 @@ def input(key):
             player.speed = 5
 
 
-
-player = FirstPersonController()
+player = Player(position=(0, 10, 0))
 app.run()
