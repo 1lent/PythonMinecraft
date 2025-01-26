@@ -1,9 +1,12 @@
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 
-shift = False
-app = Ursina()
+import time
 
+shift = False
+lastPlacedBlock: int = 0
+
+app = Ursina()
 
 class Player(Entity):
     def __init__(self, **kwargs):
@@ -14,11 +17,11 @@ class Player(Entity):
                             scale=0.5,
                             position=(1, -0.75, 1.2),
                             rotation=Vec3(0, 170, 0),
-                            model='dirt2',
+                            model='cube',
                             visible=False)
 
         self.dirt = Entity(parent=self.controller.camera_pivot,
-                           scale=0.5,
+                           scale=0.25,
                            position=(1, -0.5, 1.2),
                            rotation=Vec3(0, 170, 0),
                            model='dirt',
@@ -55,6 +58,15 @@ class Player(Entity):
         self.controller.camera_pivot.y = 2 - held_keys['left control']
 
 
+def place_block(position = [0, 0, 0], texture = 'cube_white'):
+    global lastPlacedBlock
+    current_time = time.time()
+    if (current_time - lastPlacedBlock < 0.1):
+        pass
+    else:
+      Voxel(position, texture)
+      lastPlacedBlock = current_time
+
 class Voxel(Button):
     def __init__(self, position=(0, 0, 0), texture='white_cube'):
         super().__init__(parent=scene,
@@ -78,11 +90,13 @@ def input(key):
     if held_keys['right mouse']:
         hit_info = raycast(camera.world_position, camera.forward, distance=5)
         if hit_info.hit:
-            Voxel(position=hit_info.entity.position + hit_info.normal)
+            # Voxel(position=hit_info.entity.position + hit_info.normal)
+            place_block(position=hit_info.entity.position + hit_info.normal, texture = player.inventory[player.current_inventory].texture)
     if key == 'right mouse down':
         hit_info = raycast(camera.world_position, camera.forward, distance=5)
         if hit_info.hit:
-            Voxel(position=hit_info.entity.position + hit_info.normal, texture = player.inventory[player.current_inventory].texture)
+            place_block(position=hit_info.entity.position + hit_info.normal, texture = player.inventory[player.current_inventory].texture)
+            # Voxel(position=hit_info.entity.position + hit_info.normal, texture = player.inventory[player.current_inventory].texture)
             # Assign the texture of held item to Voxel
 
     if key == 'left mouse down' and mouse.hovered_entity:
