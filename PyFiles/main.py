@@ -17,7 +17,16 @@ class Player(Entity):
                             scale=0.5,
                             position=(1, -0.75, 1.2),
                             rotation=Vec3(0, 170, 0),
+                            model='stone',
+                            texture='stone.jpg',
+                            visible=False)
+
+        self.wood = Entity(parent=self.controller.camera_pivot,
+                            scale=0.5,
+                            position=(1, -0.75, 1.2),
+                            rotation=Vec3(0, 170, 0),
                             model='cube',
+                            texture='texture-of-wood-photo.jpg',
                             visible=False)
 
         self.dirt = Entity(parent=self.controller.camera_pivot,
@@ -83,6 +92,22 @@ for z in range(8):
     for x in range(8):
         voxel = Voxel(position=(x, 0, z))
 
+class Voxel(Button):
+    def __init__(self, position=(0, 1, 0), texture='white_cube'):
+        super().__init__(parent=scene,
+                         position=position,
+                         model='cube',
+                         origin_y=.5,
+                         texture='texture-of-wood-photo.jpg',
+                         color=color.hsv(0, 0, random.uniform(.9, 1.0)),
+                         highlight_color=color.red,
+                         )
+
+
+for z in range(1):
+    for x in range(1):
+        voxel = Voxel(position=(x, 1, z))
+
 
 def input(key):
     global shift
@@ -103,6 +128,9 @@ def input(key):
         destroy(mouse.hovered_entity)
     if held_keys['left mouse']:
         destroy(mouse.hovered_entity)
+        if mouse.hovered_entity and texture is 'texture-of-wood-photo.jpg':
+            self.inventory.append(self.wood)
+
 
     if key == 'left shift':  # shift controls
         shift = not shift
