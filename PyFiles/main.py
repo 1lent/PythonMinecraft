@@ -126,10 +126,12 @@ def input(key):
 
     if key == 'left mouse down' and mouse.hovered_entity:
         destroy(mouse.hovered_entity)
+        if mouse.hovered_entity and mouse.hovered_entity.texture == 'texture-of-wood-photo.jpg':
+            player.current_inventory.append(player.wood)
     if held_keys['left mouse']:
         destroy(mouse.hovered_entity)
-        if mouse.hovered_entity and texture is 'texture-of-wood-photo.jpg':
-            self.inventory.append(self.wood)
+        if mouse.hovered_entity and mouse.hovered_entity.texture == 'texture-of-wood-photo.jpg':
+            player.current_inventory.append(player.wood)
 
 
     if key == 'left shift':  # shift controls
